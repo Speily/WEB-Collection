@@ -12,4 +12,11 @@ public interface UserService {
 
     List<User> findAll();
 
+    void add(User user);
+
+    void delById(Integer id);
+
+    User findById(Integer id);
+
+    void update(User user);
 }
