@@ -1,5 +1,6 @@
 package com.kaishengit.service;
 
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.entity.User;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface UserService {
     User findById(Integer id);
 
     void update(User user);
+
+    PageInfo<User> findByParam(Integer pageNo, String userName, String address, Integer min, Integer max);
 }

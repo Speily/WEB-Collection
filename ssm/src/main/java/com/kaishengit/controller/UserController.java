@@ -1,17 +1,14 @@
 package com.kaishengit.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.entity.User;
 import com.kaishengit.service.UserService;
+import com.kaishengit.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -21,15 +18,25 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/list")
-    public String list(Model model){
+    public String list(@RequestParam(required = false,defaultValue = "1",name = "p") Integer pageNo ,
+                       @RequestParam(required = false) String userName,
+                       @RequestParam(required = false) String address,
+                       @RequestParam(required = false) Integer min,
+                       @RequestParam(required = false) Integer max,
+                       Model model){
 
-        List<User> userList = userService.findAll();
-        for(User user:userList){
-            System.out.println(user.getAddress());
-        }
-        model.addAttribute("userList",userList);
+        userName = StringUtils.toUTF8(userName);
+        address = StringUtils.toUTF8(address);
+
+        PageInfo<User> pageList = userService.findByParam(pageNo,userName,address,min,max);
+
+        model.addAttribute("page",pageList);
         model.addAttribute("success","state");
-
+        model.addAttribute("userName",userName);
+        model.addAttribute("address",address);
+        model.addAttribute("min",min);
+        model.addAttribute("max",max);
+        System.out.println("/list");
         return "user/list";
     }
 

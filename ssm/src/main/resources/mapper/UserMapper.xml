@@ -32,5 +32,22 @@
     <select id="findById" resultType="com.kaishengit.entity.User">
         select * from t_user where id = #{id}
     </select>
+    <select id="findByParam" resultType="com.kaishengit.entity.User">
+        SELECT * from t_user
+        <where>
+            <if test="userName != null and userName != '' ">
+                user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="address != null and address != '' ">
+                address like concat('%',#{address},'$')
+            </if>
+            <if test="min != null">
+                and id  &gt;= #{min}
+            </if>
+            <if test="max != null">
+                and id  &lt;= #{max}
+            </if>
+        </where>
+    </select>
 
 </mapper>
