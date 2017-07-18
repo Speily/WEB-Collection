@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaishengit.mapper.UserMapper">
+    <!-- namespace属性值推荐写完全限定名 -->
+    <!--一级缓存默认开启，手动开启二级缓存-->
+    <!--<cache/>-->
+    <!-- 
+		sql区
+		根据Id查询User对象
+		id: 类似方法名
+		parameterType : 参数类型（可选）
+		resultType : 返回值类型(可选)
+		 增删改不必写返回值类型 ,需要指定参数类型parameterType,获取自增长主键id
+	-->
+
+</mapper>
