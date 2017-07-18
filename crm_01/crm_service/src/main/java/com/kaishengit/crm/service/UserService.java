@@ -8,5 +8,5 @@ import java.util.List;
  * Created by SPL on 2017/7/17 0017.
  */
 public interface UserService {
-    List<User> findAll();
+    void add(User user, Integer[] deptId);
 }

@@ -1,7 +1,9 @@
 package com.kaishengit.crm.controller;
 
 import com.kaishengit.crm.entity.Dept;
+import com.kaishengit.crm.entity.User;
 import com.kaishengit.crm.service.DeptService;
+import com.kaishengit.crm.service.UserService;
 import com.kaishengit.result.AjaxResult;
 import com.kaishengit.util.Ztree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class AccountController {
 
     @Autowired
     private DeptService deptService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public String accountList() {
@@ -41,7 +45,7 @@ public class AccountController {
             Ztree ztree = new Ztree();
             ztree.setId(dept.getId());
             ztree.setName(dept.getDeptName());
-            ztree.setpId(dept.getpId());
+            ztree.setpId(dept.getDeptId());
             ztreeList.add(ztree);
         }
 
@@ -57,6 +61,16 @@ public class AccountController {
 
         deptService.add(dept);
 
+        return AjaxResult.success();
+    }
+
+    /**
+     * 新增员工（用户）
+     */
+    @PostMapping("/add")
+    @ResponseBody
+    public AjaxResult addUser(User user,Integer[] deptId){
+        userService.add(user,deptId);
         return AjaxResult.success();
     }
 

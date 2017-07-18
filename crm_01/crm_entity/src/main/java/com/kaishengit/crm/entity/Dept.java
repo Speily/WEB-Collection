@@ -11,7 +11,7 @@ public class Dept implements Serializable {
 
     private String deptName;
 
-    private Integer pId;
+    private Integer deptId;
 
     public Integer getId() {
         return id;
@@ -29,11 +29,11 @@ public class Dept implements Serializable {
         this.deptName = deptName;
     }
 
-    public Integer getpId() {
-        return pId;
+    public Integer getDeptId() {
+        return deptId;
     }
 
-    public void setpId(Integer pId) {
-        this.pId = pId;
+    public void setDeptId(Integer deptId) {
+        this.deptId = deptId;
     }
 }
