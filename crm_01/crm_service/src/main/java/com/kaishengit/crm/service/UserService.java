@@ -9,4 +9,14 @@ import java.util.List;
  */
 public interface UserService {
     void add(User user, Integer[] deptId);
+
+    void dellById(Integer userId);
+
+    Long countByDeptId(Integer id);
+
+    List<User> findByDeptId(Integer id);
+
+    Long count();
+
+    User findByTelLoadDept(String tel, String password);
 }

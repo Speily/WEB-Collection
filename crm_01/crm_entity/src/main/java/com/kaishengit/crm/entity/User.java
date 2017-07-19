@@ -1,6 +1,7 @@
 package com.kaishengit.crm.entity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by SPL on 2017/7/17 0017.
@@ -11,6 +12,7 @@ public class User {
     private String userName;
     private String tel;
     private String password;
+    private List<Dept> deptList;
     /**
      * 创建时间
      */
@@ -20,6 +22,14 @@ public class User {
      * 最后修改时间
      */
     private Date updateTime;
+
+    public List<Dept> getDeptList() {
+        return deptList;
+    }
+
+    public void setDeptList(List<Dept> deptList) {
+        this.deptList = deptList;
+    }
 
     public Date getCreateTime() {
         return createTime;

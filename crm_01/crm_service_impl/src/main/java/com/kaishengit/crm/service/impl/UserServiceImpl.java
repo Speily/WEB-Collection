@@ -5,9 +5,13 @@ import com.kaishengit.crm.entity.UserDept;
 import com.kaishengit.crm.mapper.UserDeptMapper;
 import com.kaishengit.crm.mapper.UserMapper;
 import com.kaishengit.crm.service.UserService;
+import com.kaishengit.exception.ServiceException;
+import com.kaishengit.exception.SessionException;
+import com.kaishengit.result.DataTableResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private UserDeptMapper userDeptMapper;
+
     /*
      * 添加员工
      */
@@ -32,11 +37,75 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
 
         //添加员工和部门关系
-        for(Integer deptId:deptIds){
+        for (Integer deptId : deptIds) {
             UserDept userDept = new UserDept();
             userDept.setDeptId(deptId);
             userDept.setUserId(user.getId());
             userDeptMapper.insert(userDept);
         }
     }
+
+
+    /*
+     * 删除员工
+     */
+    @Override
+    @Transactional
+    public void dellById(Integer userId) {
+
+        //删除员工和部门关系
+        userDeptMapper.delByUserId(userId);
+
+        //删除员工user
+        userMapper.delById(userId);
+
+    }
+
+    @Override
+    public Long countByDeptId(Integer deptId) {
+        if (new Integer(1000).equals(deptId)) {
+            deptId = null;
+        }
+        return userMapper.countByDeptId(deptId);
+    }
+
+    @Override
+    public List<User> findByDeptId(Integer deptId) {
+        if (new Integer(1000).equals(deptId)) {
+            deptId = null;
+        }
+        return userMapper.finByDeptId(deptId);
+    }
+
+    @Override
+    public Long count() {
+        return userMapper.count();
+    }
+
+    /**
+     * 登录验证
+     * @param tel
+     * @param password
+     * @return
+     */
+    @Override
+    public User findByTelLoadDept(String tel, String password) {
+
+        if(StringUtils.isEmpty(tel)){
+            throw new ServiceException("参数异常");
+        }
+
+        User user = userMapper.findByTelLoadDept(tel);
+
+        if(user == null){
+            throw new ServiceException("账号或密码错误");
+        }else{
+            if(password.equals(user.getPassword())){
+                return user;
+            }
+        }
+        throw new SessionException("账号或密码错误");
+
+    }
+
 }

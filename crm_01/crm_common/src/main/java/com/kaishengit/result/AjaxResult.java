@@ -1,6 +1,7 @@
 package com.kaishengit.result;
 
 /**
+ * Ajax响应结果类
  * Created by SPL on 2017/7/17 0017.
  */
 public class AjaxResult {
@@ -12,25 +13,49 @@ public class AjaxResult {
     private String message;
     private Object data;
 
-    public AjaxResult(){}
+    public AjaxResult() {
+    }
 
-    public static AjaxResult success(){
+    /**
+     * 响应成功
+     *
+     * @return success
+     */
+    public static AjaxResult success() {
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.setState(AjaxResult.SUCCESS);
         return ajaxResult;
     }
-    public static AjaxResult success(Object data){
+
+    /**
+     * 响应成功
+     *
+     * @return Object data
+     */
+    public static AjaxResult success(Object data) {
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.setState(AjaxResult.SUCCESS);
         ajaxResult.setData(data);
         return ajaxResult;
     }
-    public static AjaxResult error(){
+
+    /**
+     * 响应错误
+     *
+     * @return error
+     */
+    public static AjaxResult error() {
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.setState(AjaxResult.ERROR);
         return ajaxResult;
     }
-    public static AjaxResult error(Object data){
+
+    /**
+     * 响应错误
+     *
+     * @return Object data
+     */
+    public static AjaxResult error(Object data) {
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.setState(AjaxResult.ERROR);
         ajaxResult.setData(data);

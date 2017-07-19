@@ -4,4 +4,7 @@
     <insert id="insert">
         INSERT into t_userDept(user_id, dept_id) values(#{userId},#{deptId})
     </insert>
+    <delete id="delByUserId">
+        DELETE FROM t_userdept WHERE user_id = ${userId}
+    </delete>
 </mapper>
