@@ -108,4 +108,16 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void update(User user, String oldPassword, String newPassword) throws ServiceException {
+        if(user.getPassword().equals(oldPassword)){
+            user.setUpdateTime(new Date());
+            user.setPassword(newPassword);
+            userMapper.update(user);
+        }else{
+            throw new ServiceException("原密码错误");
+        }
+    }
+
+
 }

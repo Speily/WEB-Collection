@@ -6,6 +6,9 @@
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         insert into t_user(user_name, tel, password, create_time, update_time) values (#{userName},#{tel},#{password},#{createTime},#{updateTime})
     </insert>
+    <update id="update" parameterType="User">
+        update t_user set password = #{password},update_time = #{updateTime} where id = #{id}
+    </update>
     <delete id="delById">
         DELETE FROM t_user
         <where>

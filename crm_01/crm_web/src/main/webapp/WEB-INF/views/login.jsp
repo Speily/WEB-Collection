@@ -38,7 +38,7 @@
 
          <form method="post" id="loginForm">
             <div class="form-group has-feedback">
-                <input type="text" name="tel" class="form-control" placeholder="手机号码" autofocus >
+                <input type="text" name="tel" class="form-control" placeholder="手机号码" autofocus autocomplete="false">
             </div>
             <div class="form-group has-feedback">
                 <input type="password" name="password" class="form-control" placeholder="密码">
@@ -103,7 +103,7 @@
                     if(data.state == "success") {
                         window.location.href = "/home";
                     } else {
-                        layer.msg(data.message);
+                        layer.msg(data.data);
                     }
                 }).error(function(){
                     layer.msg("服务器异常");

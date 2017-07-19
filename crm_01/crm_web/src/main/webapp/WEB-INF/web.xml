@@ -48,5 +48,4 @@
         <param-value>classpath*:applicationContext*.xml</param-value>
     </context-param>
 
-
 </web-app>

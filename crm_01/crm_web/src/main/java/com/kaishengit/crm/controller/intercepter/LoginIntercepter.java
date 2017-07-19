@@ -1,6 +1,7 @@
 package com.kaishengit.crm.controller.intercepter;
 
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,9 @@ public class LoginIntercepter extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String url = request.getRequestURI();
+        if(url.startsWith("/static/")){
+            return true;
+        }
         if("/".equals(url)){
             return true;
         } else{

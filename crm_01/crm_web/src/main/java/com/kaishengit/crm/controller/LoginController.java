@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.security.util.Password;
 
 import javax.servlet.http.HttpSession;
 
@@ -28,7 +29,7 @@ public class LoginController {
      * @return
      */
     @GetMapping("/")
-    public String loginView(){
+    public String login(){
         return "login";
     }
 
@@ -62,14 +63,30 @@ public class LoginController {
     public String logout(HttpSession session, RedirectAttributes redirectAttributes){
         session.invalidate();
         redirectAttributes.addFlashAttribute("message","您已退出系统！");
-        return "redirect:login";
+        return "redirect:/";
     }
     /**
-     * 用户设置
+     * 用户设置页面
      * @return
      */
     @GetMapping("/profile")
     public String userProfile(){
         return "profile";
+    }
+    /**
+     * 用户设置
+     * @return
+     */
+    @PostMapping("/profile")
+    @ResponseBody
+    public AjaxResult userProfile(String oldPassword,String newPassword,HttpSession session){
+        User user = (User) session.getAttribute("currentUser");
+        try{
+            userService.update(user, oldPassword,newPassword);
+            return AjaxResult.success();
+
+        } catch (ServiceException ex){
+            return AjaxResult.error(ex.getMessage());
+        }
     }
 }

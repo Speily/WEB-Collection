@@ -10,9 +10,9 @@
 
     <!--开启注解的MVC-->
     <mvc:annotation-driven/>
-
     <!--处理静态资源-->
     <mvc:default-servlet-handler/>
+    <!--<mvc:resources mapping="/static/**" location="/static/"/>-->
 
     <!--视图解析器-->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
@@ -25,6 +25,15 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/**/fonts/*"/>
+            <mvc:exclude-mapping path="/**/*.css"/>
+            <mvc:exclude-mapping path="/**/*.js"/>
+            <mvc:exclude-mapping path="/**/*.png"/>
+            <mvc:exclude-mapping path="/**/*.gif"/>
+            <mvc:exclude-mapping path="/**/*.jpg"/>
+            <mvc:exclude-mapping path="/**/*.jpeg"/>
+            <mvc:exclude-mapping path="/**/*login*"/>
+            <mvc:exclude-mapping path="/**/*Login*"/>
             <bean class="com.kaishengit.crm.controller.intercepter.LoginIntercepter"/>
         </mvc:interceptor>
     </mvc:interceptors>
