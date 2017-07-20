@@ -49,19 +49,17 @@ public class AjaxResult {
         ajaxResult.setState(AjaxResult.ERROR);
         return ajaxResult;
     }
-
     /**
      * 响应错误
-     *
+     * @return String message
      * @return Object data
      */
-    public static AjaxResult error(Object data) {
+    public static AjaxResult error(String message) {
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.setState(AjaxResult.ERROR);
-        ajaxResult.setData(data);
+        ajaxResult.setMessage(message);
         return ajaxResult;
     }
-
 
     public String getState() {
         return state;

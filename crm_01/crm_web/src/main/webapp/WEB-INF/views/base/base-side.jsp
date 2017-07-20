@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!-- 顶部导航栏部分 -->
 <header class="main-header">
     <!-- Logo -->
@@ -88,7 +89,7 @@
                 </a>
             </li>
             <!-- 客户管理 -->
-            <li class="treeview">
+            <li class="treeview ${fn:startsWith(param.active, "cust_") ? 'active' : ''}">
                 <a href="#">
                     <i class="fa fa-address-book-o"></i> <span>客户管理</span>
                     <span class="pull-right-container">
@@ -96,8 +97,8 @@
             </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="/customer/my"><i class="fa fa-circle-o"></i> 我的客户</a></li>
-                    <li><a href="/customer/public"><i class="fa fa-circle-o"></i> 公海客户</a></li>
+                    <li class="${param.active == 'cust_my' ? 'active' : ''}"><a href="/customer/my"><i class="fa fa-circle-o"></i> 我的客户</a></li>
+                    <li class=""><a href="/customer/public"><i class="fa fa-circle-o"></i> 公海客户</a></li>
                 </ul>
             </li>
             <!-- 工作记录 -->

@@ -25,6 +25,7 @@ public class LoginIntercepter extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String url = request.getRequestURI();
+
         if(url.startsWith("/static/")){
             return true;
         }
@@ -34,9 +35,12 @@ public class LoginIntercepter extends HandlerInterceptorAdapter {
             HttpSession session = request.getSession();
             if(session.getAttribute("currentUser") == null){
                 response.sendRedirect("/");
+                return false;
+            }else{
+
+                return true;
             }
         }
 
-        return true;
     }
 }

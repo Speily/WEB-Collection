@@ -18,6 +18,12 @@
             <groupId>com.kaishengit</groupId>
             <artifactId>crm_entity</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+        </dependency>
+
     </dependencies>
+
 
 </project>

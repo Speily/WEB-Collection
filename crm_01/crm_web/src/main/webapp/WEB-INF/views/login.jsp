@@ -99,11 +99,11 @@
                 }
             },
             submitHandler:function(){
-                $.post("/login",$("#loginForm").serialize()).done(function(data){
+                $.post("/",$("#loginForm").serialize()).done(function(data){
                     if(data.state == "success") {
                         window.location.href = "/home";
                     } else {
-                        layer.msg(data.data);
+                        layer.msg(data.message);
                     }
                 }).error(function(){
                     layer.msg("服务器异常");

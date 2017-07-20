@@ -5,6 +5,7 @@ import com.kaishengit.crm.service.UserService;
 import com.kaishengit.exception.ServiceException;
 import com.kaishengit.result.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,7 @@ public class LoginController {
      * @param httpSession
      * @return
      */
-    @PostMapping("/login")
+    @PostMapping("/")
     @ResponseBody
     public AjaxResult login(String tel, String password, HttpSession httpSession){
 

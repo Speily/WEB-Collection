@@ -9,6 +9,7 @@ import com.kaishengit.exception.ServiceException;
 import com.kaishengit.exception.SessionException;
 import com.kaishengit.result.DataTableResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private UserDeptMapper userDeptMapper;
+
+    @Value("${password.salt}")
+    private String passwordSalt;
 
     /*
      * 添加员工
@@ -89,7 +93,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public User findByTelLoadDept(String tel, String password) {
+    public User findByTelLoadDept(String tel, String password) throws ServiceException{
 
         if(StringUtils.isEmpty(tel)){
             throw new ServiceException("参数异常");

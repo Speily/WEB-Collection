@@ -18,7 +18,7 @@
         <section class="content">
 
            <h3>首页</h3>
-            <img src="/static/dist/img/photo2.png" alt="">
+            <img src="/static/dist/img/photo2.png" alt="" style="width: 900px">
 
         </section>
         <!-- /.content -->
