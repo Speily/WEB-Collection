@@ -123,5 +123,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<User> findAllUser() {
+        return userMapper.findAll();
+    }
+
 
 }

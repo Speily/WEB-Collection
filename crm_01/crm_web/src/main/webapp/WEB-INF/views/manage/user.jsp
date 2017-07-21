@@ -203,7 +203,7 @@
         $("#addDeptBtn").click(function () {
             layer.prompt({"title": "请输入部门名称"}, function (text, index) {
                 layer.close(index);//关闭对话框
-                $.post("/manage/user/dept/add", {"deptName": text, "pId": 1000}).done(function (data) {
+                $.post("/manage/user/dept/add", {"deptName": text, "deptId": 1000}).done(function (data) {
                     if (data.state == "success") {
                         layer.msg("添加成功");
                         tree.reAsyncChildNodes(null, "refresh");

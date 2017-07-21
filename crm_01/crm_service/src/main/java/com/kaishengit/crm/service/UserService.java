@@ -21,4 +21,6 @@ public interface UserService {
     User findByTelLoadDept(String tel, String password);
 
     void update(User user, String oldPassword, String newPassword);
+
+    List<User> findAllUser();
 }

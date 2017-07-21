@@ -33,8 +33,8 @@
                     <div class="box-tools">
                         <a href="/customer/my" class="btn btn-primary btn-sm"><i class="fa fa-arrow-left"></i> 返回列表</a>
                         <a href="/customer/my/${customer.id}/edit" class="btn bg-purple btn-sm"><i class="fa fa-pencil"></i> 编辑</a>
-                        <button class="btn bg-orange btn-sm"><i class="fa fa-exchange"></i> 转交他人</button>
-                        <button class="btn bg-maroon btn-sm"><i class="fa fa-recycle"></i> 放入公海</button>
+                        <button id="tranBtn" class="btn bg-orange btn-sm"><i class="fa fa-exchange"></i> 转交他人</button>
+                        <button id="sharePublicBtn" rel="${customer.id}" class="btn bg-maroon btn-sm"><i class="fa fa-recycle"></i> 放入公海</button>
                         <button id="delBtn" rel="${customer.id}" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> 删除</button>
                     </div>
                 </div>
@@ -116,6 +116,29 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+    <%--模态框--%>
+    <div class="modal fade" id="accountModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">选择转入员工</h4>
+                </div>
+                <div class="modal-body">
+                    <select id="userId" class="form-control">
+                        <option value=""></option>
+                        <c:forEach items="${userList}" var="user">
+                            <option value="${user.id}">${user.userName} ( ${user.tel} )</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="tranBtnOk">转交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     <%@ include file="../base/base-footer.jsp"%>
 
@@ -126,11 +149,39 @@
 <script src="/static/plugins/layer/layer.js"></script>
 <script>
     $(function () {
+
+        //获取当前用户id
+        var custId = ${customer.id};
+
+        //删除客户
         $("#delBtn").click(function () {
             var id = $(this).attr("rel");
             layer.confirm("删除客户会自动删除相关数据，确定吗?",function(){
                 window.location.href = "/customer/my/"+id+"/del";
             });
+        });
+
+        //放入公海
+        $("#sharePublicBtn").click(function () {
+            var id = $(this).attr("rel");
+            layer.confirm("确定要将该客户放入公海吗？",function () {
+                window.location.href = "/customer/my/"+id+"/topublic";
+            });
+        });
+        //转交他人
+        $("#tranBtn").click(function () {
+            $("#accountModal").modal({
+                show:true,
+                backdrop:'static'
+            });
+        });
+        $("#tranBtnOk").click(function () {
+            var userId = $("#userId").val();
+            if(!userId) {
+                layer.msg("请选择转入账号");
+                return;
+            }
+            window.location.href = "/customer/my/"+custId+"/turnto/"+userId;
         });
     })
 </script>

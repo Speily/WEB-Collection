@@ -80,7 +80,7 @@
                             <th>联系方式</th>
                         </tr>
                         <c:forEach items="${pageInfo.list}" var="customer">
-                            <tr rel="${customer.id}" class="customer_row">
+                            <tr rel="0" class="customer_row">
                                 <td><span class="name-avatar" style="background-color:${customer.sex == '先生' ? '#808080' : '#FF66CC'};">${fn:substring(customer.custName,0,1)}</span></td>
                                 <td>
                                         ${customer.custName}
@@ -97,9 +97,9 @@
                 </div>
                 <!-- /.box-body -->
                 <c:if test="${pageInfo.pages > 1}" >
-                <div class="box-footer">
-                    <ul id="pagination-demo" class="pagination-sm pull-right"></ul>
-                </div>
+                    <div class="box-footer">
+                        <ul id="pagination-demo" class="pagination-sm pull-right"></ul>
+                    </div>
                 </c:if>
             </div>
             <!-- /.box -->
@@ -125,16 +125,16 @@
         });
 
         <c:if test="${pageInfo.pages > 1}" >
-            //分页
-            $('#pagination-demo').twbsPagination({
-                totalPages: ${pageInfo.pages},
-                visiblePages: 7,
-                first:'首页',
-                last:'末页',
-                prev:'上一页',
-                next:'下一页',
-                href:"?p={{number}}"
-            });
+        //分页
+        $('#pagination-demo').twbsPagination({
+            totalPages: ${pageInfo.pages},
+            visiblePages: 7,
+            first:'首页',
+            last:'末页',
+            prev:'上一页',
+            next:'下一页',
+            href:"?p={{number}}"
+        });
         </c:if>
         $(".customer_row").click(function () {
             var id = $(this).attr("rel");

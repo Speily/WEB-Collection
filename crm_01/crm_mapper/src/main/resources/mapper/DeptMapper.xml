@@ -3,7 +3,7 @@
 <mapper namespace="com.kaishengit.crm.mapper.DeptMapper">
     <insert id="add" parameterType="Dept" useGeneratedKeys="true" keyProperty="id">
         insert into t_dept (id, dept_name, dept_id)
-        values (#{id}, #{deptName}, #{pId}
+        values (#{id}, #{deptName}, #{deptId}
       )
     </insert>
     <select id="findAll" resultType="com.kaishengit.crm.entity.Dept">
