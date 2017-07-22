@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface CustomerService {
+
     void newMyCust(User user, Customer cust);
+
+    void newPubCust(User user, Customer cust);
 
     PageInfo<Customer> findMyCustList(Map<String, Object> queryParam,User user);
 

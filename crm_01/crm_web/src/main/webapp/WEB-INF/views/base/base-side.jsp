@@ -98,7 +98,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li class="${param.active == 'cust_my' ? 'active' : ''}"><a href="/customer/my"><i class="fa fa-circle-o"></i> 我的客户</a></li>
-                    <li class=""><a href="/customer/public"><i class="fa fa-circle-o"></i> 公海客户</a></li>
+                    <li class="${param.active == 'cust_public' ? 'active' : ''}"><a href="/customer/public"><i class="fa fa-circle-o"></i> 公海客户</a></li>
                 </ul>
             </li>
             <!-- 工作记录 -->

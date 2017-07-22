@@ -7,12 +7,12 @@ import com.kaishengit.crm.mapper.UserMapper;
 import com.kaishengit.crm.service.UserService;
 import com.kaishengit.exception.ServiceException;
 import com.kaishengit.exception.SessionException;
-import com.kaishengit.result.DataTableResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void add(User user, Integer[] deptIds) {
         user.setCreateTime(new Date());
+        user.setTel(DigestUtils.md5Hex(user.getTel() + passwordSalt));
         userMapper.insert(user);
 
         //添加员工和部门关系
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("参数异常");
         }
 
-        User user = userMapper.findByTelLoadDept(tel);
+        User user = userMapper.findByTelLoadDept(DigestUtils.md5Hex(tel+passwordSalt));
 
         if(user == null){
             throw new ServiceException("账号或密码错误");
@@ -108,15 +109,23 @@ public class UserServiceImpl implements UserService {
                 return user;
             }
         }
+
         throw new SessionException("账号或密码错误");
 
     }
 
+    /**
+     * 修改密码
+     * @param user
+     * @param oldPassword
+     * @param newPassword
+     * @throws ServiceException
+     */
     @Override
     public void update(User user, String oldPassword, String newPassword) throws ServiceException {
         if(user.getPassword().equals(oldPassword)){
             user.setUpdateTime(new Date());
-            user.setPassword(newPassword);
+            user.setPassword(DigestUtils.md5Hex(newPassword+passwordSalt));
             userMapper.update(user);
         }else{
             throw new ServiceException("原密码错误");

@@ -19,9 +19,16 @@
 <body class="hold-transition skin-blue sidebar-mini">
 <!-- Site wrapper -->
 <div class="wrapper">
-    <jsp:include page="../base/base-side.jsp">
-        <jsp:param name="active" value="customer_my"/>
-    </jsp:include>
+    <c:if test="${whose =='my'}">
+        <jsp:include page="../base/base-side.jsp">
+            <jsp:param name="active" value="cust_my"/>
+        </jsp:include>
+    </c:if>
+    <c:if test="${whose =='public'}">
+        <jsp:include page="../base/base-side.jsp">
+            <jsp:param name="active" value="cust_public"/>
+        </jsp:include>
+    </c:if>
     <!-- 右侧内容部分 -->
     <div class="content-wrapper">
 
@@ -31,10 +38,12 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">客户资料</h3>
                     <div class="box-tools">
-                        <a href="/customer/my" class="btn btn-primary btn-sm"><i class="fa fa-arrow-left"></i> 返回列表</a>
+                        <a href=" ${whose =='my' ? '/customer/my' : '/customer/public'} " class="btn btn-primary btn-sm"><i class="fa fa-arrow-left"></i> 返回列表</a>
                         <a href="/customer/my/${customer.id}/edit" class="btn bg-purple btn-sm"><i class="fa fa-pencil"></i> 编辑</a>
                         <button id="tranBtn" class="btn bg-orange btn-sm"><i class="fa fa-exchange"></i> 转交他人</button>
-                        <button id="sharePublicBtn" rel="${customer.id}" class="btn bg-maroon btn-sm"><i class="fa fa-recycle"></i> 放入公海</button>
+                        <c:if test="${whose == 'my'}">
+                            <button id="sharePublicBtn" rel="${customer.id}" class="btn bg-maroon btn-sm"><i class="fa fa-recycle"></i> 放入公海</button>
+                        </c:if>
                         <button id="delBtn" rel="${customer.id}" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> 删除</button>
                     </div>
                 </div>

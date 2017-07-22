@@ -120,7 +120,7 @@
                 custName:{
                     required:true
                 },
-                mobile:{
+                tel:{
                     required:true
                 }
             },
@@ -128,7 +128,7 @@
                 custName:{
                     required:"请输入姓名"
                 },
-                mobile:{
+                tel:{
                     required:"请输入联系电话"
                 }
             }
