@@ -177,9 +177,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 客户信息导出excet
-     *
-     * @param user
-     * @param outputStream
      */
     @Override
     public void exportExcel(User user, OutputStream outputStream) {
@@ -221,6 +218,34 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ServiceException("导出Excel异常", ex);
         }
 
+    }
+
+    /**
+     * 查询我的客户
+     * @param user
+     * @return
+     */
+    @Override
+    public List<Customer> findCustList(User user) {
+        CustomerExample customerExample = new CustomerExample();
+        customerExample.createCriteria().andUserIdEqualTo(user.getId());
+        return customerMapper.selectByExample(customerExample);
+    }
+
+    @Override
+    public void updateLastConcatTime(Customer customer,Date date) {
+        CustomerExample customerExample = new CustomerExample();
+        customerExample.createCriteria().andLastContactTimeEqualTo(date);
+        customerMapper.updateByExampleSelective(customer,customerExample);
+    }
+
+    /**
+     * 获取各种星级客户数量
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> findCustomerLevelCount() {
+        return customerMapper.countCustLevel();
     }
 
 }

@@ -27,4 +27,5 @@ public interface UserMapper {
 
     void update(User user);
 
+    User findById(@Param("id") Integer userId);
 }

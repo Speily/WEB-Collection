@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +56,7 @@ public class UserController {
     }
 
     /**
-     * 目录树
-     * 新增子目录
+     * 新增部门（目录树）
      */
     @PostMapping("/dept/add")
     @ResponseBody

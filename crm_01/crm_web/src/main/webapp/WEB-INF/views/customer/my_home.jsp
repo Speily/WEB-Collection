@@ -34,12 +34,12 @@
 <body class="hold-transition skin-blue sidebar-mini">
 <!-- Site wrapper -->
 <div class="wrapper">
-    <c:if test="${whose =='my'}">
+    <c:if test="${formWhere =='my'}">
         <jsp:include page="../base/base-side.jsp">
             <jsp:param name="active" value="cust_my"/>
         </jsp:include>
     </c:if>
-    <c:if test="${whose =='public'}">
+    <c:if test="${formWhere =='public'}">
         <jsp:include page="../base/base-side.jsp">
             <jsp:param name="active" value="cust_public"/>
         </jsp:include>
@@ -65,8 +65,8 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">我的客户</h3>
                     <div class="box-tools pull-right">
-                        <input type="hidden" id="whose" value="${whose}">
-                        <a href=" ${whose =='my' ? '/customer/my/new' : '/customer/public/new'} " class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增客户</a>
+                        <input type="hidden" id="formWhere" value="${formWhere}">
+                        <a href=" ${formWhere =='my' ? '/customer/my/new' : '/customer/public/new'} " class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增客户</a>
                         <a href="/customer/exportExcel" class="btn btn-primary btn-sm"><i class="fa fa-file-excel-o"></i> 导出Excel</a>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
 <script>
     $(function () {
 
-        var whose = $("#whose").val();
+        var formWhere = $("#formWhere").val();
 
         $("#resetBtn").click(function () {
             window.history.go(-1);
@@ -153,7 +153,8 @@
         </c:if>
         $(".customer_row").click(function () {
             var id = $(this).attr("rel");
-            if(whose == "my"){
+
+            if(formWhere == "my"){
 
                 window.location.href = "/customer/my/"+id;
             }else{

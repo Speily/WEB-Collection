@@ -45,7 +45,7 @@
                                     <th>姓名</th>
                                     <th>部门</th>
                                     <th>手机</th>
-                                    <th>#</th>
+                                    <th>编辑</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -143,9 +143,11 @@
                 {
                     "data": function (row) {
                         //alert(row.id);
-                        return "<a href='javascript:;' rel='" + row.id + "' class='delUser'><i class='fa fa-trash text-danger'></i></a>";
+                        return "<a href='javascript:;' rel='\" + row.id + \"' class='editUser'><i class='fa fa-edit text-primary'></i></a>" +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                            "<a href='javascript:;' rel='\" + row.id + \"' class='delUser'><i class='fa fa-trash text-danger'></i></a>";
                     }
-                },
+                }
             ],
             language: {
                 "loadingRecords": "正在加载...",
@@ -159,7 +161,24 @@
         /*删除用户(事件代理)*/
         $(document).delegate(".delUser", "click", function () {
             var userId = $(this).attr("rel");
-            alert(userId)
+            layer.confirm("确定要删除吗?", function (index) {
+                layer.close(index);
+                $.post("/manage/user/del/" + userId).done(function (data) {
+                    if (data.state == "success") {
+                        layer.msg("删除成功");
+                        dataTable.ajax.reload();
+                    } else {
+                        layer.msg(data.message);
+                    }
+                }).error(function () {
+                    layer.msg("服务器异常");
+                });
+            });
+
+        })
+        /*删除用户(事件代理)*/
+        $(document).delegate(".delUser", "click", function () {
+            var userId = $(this).attr("rel");
             layer.confirm("确定要删除吗?", function (index) {
                 layer.close(index);
                 $.post("/manage/user/del/" + userId).done(function (data) {
@@ -203,7 +222,7 @@
         $("#addDeptBtn").click(function () {
             layer.prompt({"title": "请输入部门名称"}, function (text, index) {
                 layer.close(index);//关闭对话框
-                $.post("/manage/user/dept/add", {"deptName": text, "deptId": 1000}).done(function (data) {
+                $.post("/manage/user/dept/add", {"deptName": text, "deptId": 1}).done(function (data) {
                     if (data.state == "success") {
                         layer.msg("添加成功");
                         tree.reAsyncChildNodes(null, "refresh");

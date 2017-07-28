@@ -23,4 +23,6 @@ public interface UserService {
     void update(User user, String oldPassword, String newPassword);
 
     List<User> findAllUser();
+
+    User findByUserId(Integer userId);
 }

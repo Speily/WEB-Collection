@@ -137,5 +137,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.findAll();
     }
 
+    /**
+     * 通过id查询user
+     * @param userId
+     * @return
+     */
+    @Override
+    public User findByUserId(Integer userId) {
+        return userMapper.findById(userId);
+    }
+
 
 }

@@ -230,8 +230,11 @@
     </if>
       order by create_time desc
   </select>
+    <select id="countCustLevel" resultType="java.util.Map">
+      SELECT level,COUNT(*) AS num from t_customer GROUP BY level
+    </select>
 
-  <update id="updateByExampleSelective" parameterType="map">
+    <update id="updateByExampleSelective" parameterType="map">
     update t_customer
     <set>
       <if test="record.id != null">

@@ -3,13 +3,19 @@ package com.kaishengit.crm.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
+import com.google.zxing.WriterException;
+import com.kaishengit.crm.entity.ChanceRecod;
 import com.kaishengit.crm.entity.Customer;
+import com.kaishengit.crm.entity.Task;
 import com.kaishengit.crm.entity.User;
 import com.kaishengit.crm.exception.NotFoundException;
 import com.kaishengit.crm.exception.UnableException;
+import com.kaishengit.crm.service.ChanceService;
 import com.kaishengit.crm.service.CustomerService;
+import com.kaishengit.crm.service.TaskService;
 import com.kaishengit.crm.service.UserService;
 import com.kaishengit.util.EncodUtils;
+import com.kaishengit.util.QRCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +24,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
 
 /**
- * 客户控制器类
+ * 客户控制器
  */
 @Controller
 @RequestMapping("/customer")
@@ -34,6 +42,12 @@ public class CustomerController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ChanceService chanceService;
+
+    @Autowired
+    private TaskService taskService;
 
     /**
      * 我的客户首页
@@ -59,7 +73,8 @@ public class CustomerController {
         PageInfo<Customer> pageInfo = customerService.findMyCustList(queryParam, user);
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("whose","my");
+
+        model.addAttribute("formWhere", "my");
 
         return "customer/my_home";
     }
@@ -76,13 +91,14 @@ public class CustomerController {
         List<String> sourceList = customerService.findSourceList();
         model.addAttribute("tradeList", tradeList);
         model.addAttribute("sourceList", sourceList);
+
         return "customer/new_mycust";
     }
 
     /**
      * 新增个人客户
      *
-     * @param cust 客户
+     * @param cust               客户
      * @param session
      * @param redirectAttributes
      * @return
@@ -92,23 +108,37 @@ public class CustomerController {
         User user = (User) session.getAttribute("currentUser");
         customerService.newMyCust(user, cust);
         redirectAttributes.addFlashAttribute("message", "新增成功");
+
         return "redirect:/customer/my";
     }
 
     /**
-     * 查看当前员工客户详情
+     * 查看当前客户详情
      *
-     * @param id 客户id
+     * @param id    客户id
      * @param model
      * @return
      */
     @GetMapping("/my/{id:\\d+}")
-    public String myCustInfo(@PathVariable Integer id, Model model) {
+    public String myCustInfo(@PathVariable Integer id, Model model,HttpSession session) {
+
+        User user = (User) session.getAttribute("currentUser");
         Customer customer = customerService.findById(id);
-        List<User> userList = userService.findAllUser();
         model.addAttribute("customer", customer);
+        //获取员工集合，客户详情页转交他人时使用
+        List<User> userList = userService.findAllUser();
         model.addAttribute("userList", userList);
-        model.addAttribute("whose","my");
+
+        //查询跟进记录
+        List<ChanceRecod> recordList = chanceService.findRecodByCustId(customer.getId());
+        model.addAttribute("recordList",recordList);
+        //查找该客户的待办事项
+        List<Task> taskList = taskService.selectUndoneTask(customer.getId(),user.getId());
+        model.addAttribute("taskList",taskList);
+
+        //flag用于前端识别响应来源（个人|公海）
+        model.addAttribute("formWhere", "my");
+
         return "customer/info";
     }
 
@@ -116,24 +146,30 @@ public class CustomerController {
     /**
      * 查看公海客户详情
      *
-     * @param id 客户id
+     * @param id    客户id
      * @param model
      * @return
      */
     @GetMapping("/public/{id:\\d+}")
     public String pubCustInfo(@PathVariable Integer id, Model model) {
+
         Customer customer = customerService.findById(id);
-        List<User> userList = userService.findAllUser();
         model.addAttribute("customer", customer);
+
+        //获取员工集合，客户详情页转交他人时使用
+        List<User> userList = userService.findAllUser();
         model.addAttribute("userList", userList);
-        model.addAttribute("whose","public");
+
+        //flag用于前端识别响应来源（个人|公海）
+        model.addAttribute("formWhere", "public");
+
         return "customer/info";
     }
 
     /**
      * 修改客户信息
      *
-     * @param id 客户id
+     * @param id      客户id
      * @param session
      * @param model
      * @return
@@ -150,11 +186,11 @@ public class CustomerController {
         if (customer == null) {
             throw new NotFoundException();
         }
-        if(customer.getUserId() == 0){
+        if (customer.getUserId() == 0) {
             return "customer/my_edit";
         } else {
 
-            //判断当前用户与客户是否对应一致
+            //判断当前用户与客户所属用户是否一致
             if (!customer.getUserId().equals(user.getId())) {
                 throw new UnableException();
             }
@@ -179,11 +215,11 @@ public class CustomerController {
         }
         User user = (User) session.getAttribute("currentUser");
         //判断客户来源，公海|个人
-        if(customer.getUserId() == 0){
+        if (customer.getUserId() == 0) {
             customerService.update(customer);
             redirectAttributes.addFlashAttribute("success", "修改成功");
             return "redirect:/customer/public";
-        }else{
+        } else {
             if (!user.getId().equals(customer.getUserId())) {
                 throw new UnableException();
             }
@@ -213,11 +249,11 @@ public class CustomerController {
             throw new NotFoundException();
         }
         //判断客户来源，公海|个人
-        if(customer.getUserId() == 0){
+        if (customer.getUserId() == 0) {
             customerService.del(id);
             redirectAttributes.addFlashAttribute("message", "删除成功");
             return "redirect:/customer/public";
-        }else{
+        } else {
             if (!customer.getUserId().equals(user.getId())) {
                 throw new UnableException();
             }
@@ -276,7 +312,8 @@ public class CustomerController {
             throw new NotFoundException();
         }
         //判断客户来源，公海|个人
-        if(customer.getUserId() == 0){
+        if (customer.getUserId() == 0) {
+
             customerService.turnToSomeone(customer, userId, user);
 
             redirectAttributes.addFlashAttribute("message", "转交成功");
@@ -306,7 +343,6 @@ public class CustomerController {
         //2.设置文件下载对话框文件名
         response.addHeader("Content-Disposition", " attachment;filename=\"customer.xls\"");
         customerService.exportExcel(user, response.getOutputStream());
-
     }
 
 
@@ -318,39 +354,93 @@ public class CustomerController {
                                  @RequestParam(required = false, defaultValue = "") String keyword,
                                  @RequestParam(required = false, value = "p", defaultValue = "1") Integer pageNo,
                                  HttpSession session) {
+
         keyword = EncodUtils.toUTF8(keyword);
+
         User user = new User();
         user.setId(0);
+
         Map<String, Object> maps = Maps.newHashMap();
         maps.put("keyword", keyword);
         maps.put("pageNo", pageNo);
         PageInfo<Customer> pageInfo = customerService.findMyCustList(maps, user);
+
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("whose","public");
+
+        model.addAttribute("formWhere", "public");
+
         return "customer/my_home";
     }
 
 
     /**
      * 新增公海账户
+     *
      * @return
      */
     @GetMapping("/public/new")
-    public String newPubCust(Model model){
-        List<String> tradeList = customerService.findTradeList();
-        List<String> sourceList = customerService.findSourceList();
-        model.addAttribute("tradeList", tradeList);
-        model.addAttribute("sourceList", sourceList);
+    public String newPubCust(Model model) {
+        model.addAttribute("tradeList", customerService.findTradeList());
+        model.addAttribute("sourceList", customerService.findSourceList());
         return "customer/new_mycust";
     }
+
     @PostMapping("/public/new")
-    public String newPubCust(Customer cust,HttpSession session,RedirectAttributes redirectAttributes){
+    public String newPubCust(Customer cust, HttpSession session, RedirectAttributes redirectAttributes) {
 
         User user = (User) session.getAttribute("currentUser");
-        customerService.newPubCust(user,cust);
+        customerService.newPubCust(user, cust);
         redirectAttributes.addFlashAttribute("message", "新增成功");
         return "redirect:/customer/public";
     }
 
+
+    /**
+     * 显示客户二维码图片
+     */
+    @GetMapping("/my/qrcode/{id:\\d+}")
+    public void showCustomerQRCode(@PathVariable Integer id,HttpServletResponse response) {
+        Customer customer = customerService.findById(id);
+
+        response.setContentType("image/png");
+
+        //vcard电话名片格式
+        StringBuffer str = new StringBuffer();
+        str.append("BEGIN:VCARD\r\n");
+        str.append("VERSION:3.0\r\n");
+        str.append("N:").append(customer.getCustName()).append("\r\n");
+        str.append("TITLE:").append(customer.getJob()).append("\r\n");
+        str.append("TEL:").append(customer.getTel()).append("\r\n");
+        str.append("ADR:").append(customer.getAddress()).append("\r\n");
+        str.append("END:VCARD\r\n");
+
+        try {
+            OutputStream outputStream = response.getOutputStream();
+            QRCodeUtil.writeToStream(str.toString(), outputStream, 300, 300);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException |WriterException ex) {
+            throw new RuntimeException("渲染二维码失败",ex);
+        }
+    }
+
+    /**
+     * 添加待办事项（客户）
+     */
+    @PostMapping("/my/{customerId:\\d+}/task/new")
+    public String newTaskToCustomer(Task task) {
+        taskService.newTaskSelected(task);
+        return "redirect:/customer/my/"+task.getCustId();
+    }
+
+    /**
+     * 添加跟进记录
+     */
+    @PostMapping("/my/new/record")
+    public String newCustRecord(ChanceRecod chanceRecod,RedirectAttributes redirectAttributes){
+        chanceService.newRecoredOfCust(chanceRecod);
+        redirectAttributes.addFlashAttribute("message","添加成功");
+        return "redirect:/customer/my/"+ chanceRecod.getCustId();
+    }
 }

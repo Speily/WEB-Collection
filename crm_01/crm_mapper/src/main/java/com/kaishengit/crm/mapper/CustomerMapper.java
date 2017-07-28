@@ -2,9 +2,11 @@ package com.kaishengit.crm.mapper;
 
 import com.kaishengit.crm.entity.Customer;
 import com.kaishengit.crm.entity.CustomerExample;
-import java.util.List;
 import com.kaishengit.crm.entity.User;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 public interface CustomerMapper {
     long countByExample(CustomerExample example);
@@ -30,4 +32,6 @@ public interface CustomerMapper {
     int updateByPrimaryKey(Customer record);
 
     List<Customer> selectByParam(@Param("user") User user, @Param("keyword") String keyword);
+
+    List<Map<String,Object>> countCustLevel();
 }

@@ -79,6 +79,9 @@
         LEFT JOIN t_dept AS dept ON dept.id = userdept.dept_id
         WHERE tel = #{tel}
     </select>
+    <select id="findById" resultType="com.kaishengit.crm.entity.User">
+        SELECT * from t_user where id = #{id}
+    </select>
     <resultMap id="userDeptMap" type="User">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>

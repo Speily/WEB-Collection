@@ -5,6 +5,7 @@ import com.kaishengit.crm.entity.Customer;
 import com.kaishengit.crm.entity.User;
 
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,4 +32,10 @@ public interface CustomerService {
     void turnToSomeone(Customer customer, Integer userId,User user);
 
     void exportExcel(User user, OutputStream outputStream);
+
+    List<Customer> findCustList(User user);
+
+    void updateLastConcatTime(Customer customer,Date date);
+
+    List<Map<String,Object>> findCustomerLevelCount();
 }
