@@ -12,6 +12,7 @@ import com.kaishengit.crm.service.CustomerService;
 import com.kaishengit.crm.service.TaskService;
 import com.kaishengit.exception.ServiceException;
 import com.kaishengit.quartz.jobs.weixinRingJob;
+import com.kaishengit.weixin.WeiXinUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.quartz.*;
@@ -36,6 +37,8 @@ public class TaskServiceImpl implements TaskService {
     private CustomerService customerService;
     @Autowired
     private ChanceService chanceService;
+    @Autowired
+    private WeiXinUtil weiXinUtil;
 
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;

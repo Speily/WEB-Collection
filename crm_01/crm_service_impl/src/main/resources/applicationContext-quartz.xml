@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 ">
 
-    <!--1.指定job-->
+    <!--1.指定job，持久化-->
     <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="com.kaishengit.quartz.jobs.SpringJob"/>
         <!--如果是循环任务，必须设置该项，防止每次启动Tomcat向数据库插入重复数据-->
@@ -21,7 +21,7 @@
     <!--触发器Tigger-->
     <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="jobDetail"/>
-        <property name="cronExpression" value="0 0/5 * * * ? *"/>
+        <property name="cronExpression" value="0/5 * * * * ? *"/>
     </bean>
     <!--定义调度工厂-->
     <bean id="stdScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

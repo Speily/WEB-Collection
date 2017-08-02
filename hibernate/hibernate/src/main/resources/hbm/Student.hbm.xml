@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    
+    <hibernate-mapping package="com.kaishengit.pojo">
+    	<class name="Student" table="student">
+    		<id name="id">
+    			<generator class="native"/>
+    		</id>
+    		<property name="name" column="name"/>
+    		<!--
+    			多对多———>对应关系表两头多对一
+            	set 节点的order-by 指的是关系表中的列
+	            name : set集合属性的名称
+	            table: 关系表的名称
+	        -->
+	        <set name="teacherSet" table="student_teacher" order-by="teacher_id desc">
+	        	<!-- 自己（student）在关系表中的列名 -->
+	            <key column="student_id"></key>
+	            <many-to-many class="com.kaishengit.pojo.Teacher" column="teacher_id" />
+	        </set>
+    		
+    	</class>
+    
+    </hibernate-mapping>
+    

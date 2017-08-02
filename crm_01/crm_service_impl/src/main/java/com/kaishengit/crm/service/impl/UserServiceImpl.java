@@ -7,6 +7,7 @@ import com.kaishengit.crm.mapper.UserMapper;
 import com.kaishengit.crm.service.UserService;
 import com.kaishengit.exception.ServiceException;
 import com.kaishengit.exception.SessionException;
+import com.kaishengit.weixin.WeiXinUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private UserDeptMapper userDeptMapper;
+    @Autowired
+    private WeiXinUtil weiXinUtil;
 
     @Value("${password.salt}")
     private String passwordSalt;
@@ -38,7 +41,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void add(User user, Integer[] deptIds) {
         user.setCreateTime(new Date());
-        user.setTel(DigestUtils.md5Hex(user.getTel() + passwordSalt));
+        user.setPassword(DigestUtils.md5Hex(user.getPassword() + passwordSalt));
+        user.setTel(user.getTel());
         userMapper.insert(user);
 
         //添加员工和部门关系
@@ -48,6 +52,9 @@ public class UserServiceImpl implements UserService {
             userDept.setUserId(user.getId());
             userDeptMapper.insert(userDept);
         }
+        System.out.println(user.getTel());
+        //同步到微信通讯录
+        weiXinUtil.createUser(user.getId(),user.getUserName(),deptIds,user.getTel());
     }
 
 
@@ -63,6 +70,9 @@ public class UserServiceImpl implements UserService {
 
         //删除员工user
         userMapper.delById(userId);
+
+        //从微信通讯录删除
+        weiXinUtil.deleteUserById(userId.toString());
 
     }
 

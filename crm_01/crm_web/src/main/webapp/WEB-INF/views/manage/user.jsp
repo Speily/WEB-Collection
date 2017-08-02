@@ -249,7 +249,7 @@
 
                 for (var i = 0; i < data.length; i++) {
                     var obj = data[i];
-                    if (obj.id != 1000) {
+                    if (obj.id != 1) {
                         var html = '<label  class="checkbox-inline"><input type="checkbox" name="deptId" value="' + obj.id + '"> ' + obj.name + '</label>';
                         $(html).appendTo($("#deptArea"));
                     }

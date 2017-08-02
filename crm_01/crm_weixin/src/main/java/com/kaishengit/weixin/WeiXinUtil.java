@@ -23,8 +23,11 @@ public class WeiXinUtil {
     private static final String ACCESS_TOKEN_URL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}";
     private static final String CREATE_DEPT_URL = "https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token={0}";
     private static final String DELETE_DEPT_URL = "https://qyapi.weixin.qq.com/cgi-bin/department/delete?access_token={0}&id={1}";
+    private static final String CREATE_USER_URL = "https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token={0}";
+    private static final String DELETE_USER_URL = "https://qyapi.weixin.qq.com/cgi-bin/user/delete?access_token={0}&userid={1}";
+    private static final String SEND_MESSAGE_URL = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={0}";
     //token_type token类型用于确定url地址
-    public static final String TOKEN_TYPE_ADDRESS_BOOK = "addressBook";
+    public static final String TOKEN_TYPE_ADDRESS_BOOK = "addressBook";//操作通讯录
     public static final String TOKEN_TYPE_NORMAL = "";
 
     private static Map<Integer,String> errorCodeMap = new HashMap<>();
@@ -372,6 +375,9 @@ public class WeiXinUtil {
     @Value("${wx.addressBook.secret}")
     private String addressBookSecret;
 
+    @Value("${wx.app.agentId}")
+    private Integer agentId;
+
     /**
      * Guava缓存 将AccessToken缓存7200秒
      */
@@ -438,6 +444,113 @@ public class WeiXinUtil {
         }
     }
 
+    /**
+     * 创建用户
+     * @param userId 用户
+     * @param userName 用户名
+     * @param deptIds 所在部门ID
+     * @param tel 手机号码
+     */
+    public void createUser(int userId,String userName,Integer[] deptIds,String tel) {
+        String url = MessageFormat.format(CREATE_USER_URL,getAccessToken(TOKEN_TYPE_ADDRESS_BOOK));
+        for(Integer id :deptIds){
+            System.out.println("部门ID："+id);
+        }
+        Map<String,Object> param = Maps.newHashMap();
+        param.put("userid",userId);
+        param.put("name",userName);
+        param.put("mobile",tel);
+        param.put("department",deptIds);
+
+        String result = sendPostRequest(url,param);
+        //JSON -> Map
+        Map<String,Object> map = JSON.parseObject(result, HashMap.class);
+        Integer errorCode = Integer.valueOf(map.get("errcode").toString());
+        if(!errorCode.equals(0)) {
+            throw new WeiXinException("创建用户异常，错误码:" + errorCode + " 错误原因：" + errorCodeMap.get(errorCode));
+        }
+
+    }
+
+    /**
+     * 删除用户账号
+     * @param accountId 用户ID
+     */
+    public void deleteUserById(String accountId) {
+        String url = MessageFormat.format(DELETE_USER_URL,getAccessToken(TOKEN_TYPE_ADDRESS_BOOK),accountId);
+        String result = sendGetRequest(url);
+        //JSON -> Map
+        Map<String,Object> map = JSON.parseObject(result, HashMap.class);
+        Integer errorCode = Integer.valueOf(map.get("errcode").toString());
+        if(!errorCode.equals(0)) {
+            throw new WeiXinException("删除用户异常，错误码:" + errorCode + " 错误原因：" + errorCodeMap.get(errorCode));
+        }
+    }
+
+    /**
+     * 给指定用户发送文本消息
+     * @param userIds 接受消息的用户ID
+     * @param message 消息内容
+     */
+    public void sendTextMessageToUser(String message,String... userIds) {
+        StringBuilder sb = new StringBuilder("");
+        for(String id : userIds) {
+            sb.append(id).append("|");
+        }
+        String idStr = sb.toString();
+        idStr = idStr.substring(0,idStr.length()-1);
+        sendTextMessage(message,"toUser",idStr);
+    }
+
+    /**
+     * 给指定部门发送文本消息
+     * @param deptIds 接受消息的部门ID
+     * @param message 消息内容
+     */
+    public void sendTextMessageToDept(String message,String... deptIds) {
+        StringBuilder sb = new StringBuilder("");
+        for(String id : deptIds) {
+            sb.append(id).append("|");
+        }
+        String idStr = sb.toString();
+        idStr = idStr.substring(0,idStr.length()-1);
+        sendTextMessage(message,"toDept",idStr);
+    }
+
+    /**
+     * 发送文本消息
+     * @param message 消息
+     * @param type 消息类型
+     * @param ids 员工ID
+     */
+    private void sendTextMessage(String message,String type,String ids) {
+        String url = MessageFormat.format(SEND_MESSAGE_URL,getAccessToken(TOKEN_TYPE_NORMAL));
+
+        Map<String,String> messageMap = Maps.newHashMap();
+        messageMap.put("content",message);
+
+        Map<String,Object> param = Maps.newHashMap();
+        if("toUser".equals(type)) {
+            param.put("touser",ids);
+        } else if("toDept".equals(type)) {
+            param.put("toparty",ids);
+        }
+        param.put("msgtype","text");
+        param.put("agentid",agentId);
+        param.put("text",messageMap);
+
+        String result = sendPostRequest(url,param);
+        //JSON -> Map
+        Map<String,Object> map = JSON.parseObject(result, HashMap.class);
+        Integer errorCode = Integer.valueOf(map.get("errcode").toString());
+        if(!errorCode.equals(0)) {
+            throw new WeiXinException("发送微信消息异常，错误码:" + errorCode + " 错误原因：" + errorCodeMap.get(errorCode));
+        }
+    }
+
+
+
+    /**
 
     /**
      * 删除部门

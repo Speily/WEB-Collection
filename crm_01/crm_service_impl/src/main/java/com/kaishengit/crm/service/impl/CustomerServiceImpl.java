@@ -8,6 +8,7 @@ import com.kaishengit.crm.entity.User;
 import com.kaishengit.crm.mapper.CustomerMapper;
 import com.kaishengit.crm.service.CustomerService;
 import com.kaishengit.exception.ServiceException;
+import com.kaishengit.weixin.WeiXinUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,6 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
 import java.util.Date;
@@ -28,6 +30,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private WeiXinUtil weiXinUtil;
 
     /**
      * 从配置文件中读取trade
@@ -48,11 +52,18 @@ public class CustomerServiceImpl implements CustomerService {
      * @param cust
      */
     @Override
+    @Transactional
     public void newMyCust(User user, Customer cust) {
         Integer userId = user.getId();
         cust.setUserId(userId);
         cust.setCreateTime(new Date());
         customerMapper.insert(cust);
+
+        //发微信消息给部门
+        //weiXinUtil.sendTextMessageToDept("(群消息)新建个人客户："+cust.getCustName()+",","1");
+
+        //发微信消息给个人
+        weiXinUtil.sendTextMessageToUser("(个人消息)新建个人客户："+cust.getCustName()+",","ShiLei");
     }
     /**
      * 新增公海客户
@@ -61,12 +72,15 @@ public class CustomerServiceImpl implements CustomerService {
      * @param cust
      */
     @Override
+    @Transactional
     public void newPubCust(User user, Customer cust) {
         Integer userId = user.getId();
         cust.setMark("该客户由"+ user.getUserName()+"创建");
         cust.setCreateTime(new Date());
         cust.setUserId(0);
         customerMapper.insert(cust);
+        //发微信消息给管理员
+        weiXinUtil.sendTextMessageToDept("新建公海客户："+cust.getCustName()+",","ShiLei");
     }
 
     /**
