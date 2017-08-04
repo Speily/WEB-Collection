@@ -6,7 +6,7 @@ import com.kaishengit.pojo.Book;
 import com.kaishengit.pojo.Content;
 
 /**
- * oneToOne测试（大字段）
+ * oneToOne测试1（大字段引起的两表联查）
  * 场景：书籍名点击加载书籍内容
  * @author SPL
  *

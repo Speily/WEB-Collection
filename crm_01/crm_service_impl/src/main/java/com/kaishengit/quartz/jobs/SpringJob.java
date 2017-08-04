@@ -18,6 +18,9 @@ public class SpringJob implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
         String message = jobDataMap.getString("message");
-        System.out.println("（固定任务)------>" + message);
+        System.out.println("（固定任务5s)------>" + message);
+
+        weiXinUtil.sendTextMessageToUser("定时任务5s","ShiLei");
+
     }
 }
